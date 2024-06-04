@@ -3,14 +3,35 @@ import connectDB from './config/db.js';
 import dotenv from 'dotenv';
 import { nanoid } from 'nanoid';
 import Url from './models/Url.js';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 dotenv.config({ path: './config/.env' });
 const app = express();
+
+//Swagger
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Davi - URL Shortener',
+    version: '1.0.0',
+  },
+};
+
+const options = {
+  swaggerDefinition,
+  // Paths to files containing OpenAPI definitions
+  apis: ['app.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
 
 connectDB();
 
 // Body Parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/:urlId', async (req, res) => {
   try {
@@ -25,6 +46,11 @@ app.get('/:urlId', async (req, res) => {
     res.status(500).json('Server Error');
   }
 })
+
+/**
+ * Teste de função
+ */
+function getUrlFrom() {}
 
 app.get('/all/:date', async (req, res) => {
   try {
@@ -88,3 +114,4 @@ const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => {
   console.log(`Server is running at PORT ${PORT}`);
 });
+
