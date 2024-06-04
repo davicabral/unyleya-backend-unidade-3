@@ -14,7 +14,14 @@ const swaggerDefinition = {
   info: {
     title: 'Davi - URL Shortener',
     version: '1.0.0',
+    description: 'Esta API faz parte da pós graduação da Unyleya'
   },
+  servers: [
+    {
+      url: 'http://localhost:3333',
+      description: 'Development server',
+    }
+  ]
 };
 
 const options = {
@@ -33,6 +40,20 @@ app.use(express.json());
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+/**
+ * @swagger
+ * /{urlId}:
+ *   get:
+ *     summary: Redireciona para a URL final a partir do id da URL encurtada
+ *     description: Busca no banco de dados se existe alguma URL com o id passado por parametro, case exista redireciona automaticamente.
+ *     parameters:
+ *       - in: path
+ *         name: urlId
+ *         required: true
+ *         description: Short URL id.
+ *         schema:
+ *           type: string
+*/
 app.get('/:urlId', async (req, res) => {
   try {
     const persistedURL = await Url.findOne({ urlId: req.params.urlId });
@@ -48,10 +69,18 @@ app.get('/:urlId', async (req, res) => {
 })
 
 /**
- * Teste de função
- */
-function getUrlFrom() {}
-
+ * @swagger
+ * /all/{date}:
+ *   get:
+ *     summary: Busca todas as url encurtadas naquela data
+ *     parameters:
+ *       - in: path
+ *         name: date
+ *         required: true
+ *         description: Data usada para busca (yyyy-mm-dd).
+ *         schema:
+ *           type: string
+*/
 app.get('/all/:date', async (req, res) => {
   try {
     let initialDate = new Date(req.params.date);
@@ -65,7 +94,6 @@ app.get('/all/:date', async (req, res) => {
       $lte: finalDate,
     }
   });
-  console.log(persistedURLs);
     if (persistedURLs) {
       return res.json(persistedURLs);
     } else { 
@@ -77,6 +105,23 @@ app.get('/all/:date', async (req, res) => {
   }
 })
 
+/**
+ * @swagger
+ * /api/short:
+ *   post:
+ *     summary: Submete uma nova url para ser encurtada
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               url:
+ *                 type: string
+ *                 description: URL que será encurtada
+ *                 example: https://www.google.com
+*/
 app.post('/api/short', async (req, res) => {
   const { url } = req.body;
   const base = process.env.BASE;
