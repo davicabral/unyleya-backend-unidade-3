@@ -14,8 +14,9 @@
     "express": "^4.19.2",
     "mongoose": "^8.4.0",
     "nanoid": "^5.0.7",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-jsdoc": "^6.0.0",
+    "swagger-nodegen-cli": "^3.0.34",
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
